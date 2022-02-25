@@ -1,4 +1,4 @@
-package server;
+package model.server;
 
 public class Server {
 }

@@ -1,6 +1,8 @@
 package view.panel;
 
 import controller.Controller;
+import view.ButtonType;
+import view.MainPanel;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -34,12 +36,10 @@ public class SouthPanel extends JPanel {
     }
 
     public void setUp() {
-
         txtMsg();
         btnFile();
         btnSendMsg();
         lblImageMsgArea();
-
     }
 
     private void txtMsg() {
@@ -73,6 +73,8 @@ public class SouthPanel extends JPanel {
             }
         });
 
+        chooseFile.addActionListener(l -> controller.buttonPressed(ButtonType.File));
+
         add(chooseFile);
 
     }
@@ -82,14 +84,7 @@ public class SouthPanel extends JPanel {
         sendButton.setBounds(500,30,80,30);
         sendButton.setText("Send");
         sendButton.setFocusable(false);
-
-        sendButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(null, "Message sent!");
-            }
-        });
-
+        sendButton.addActionListener(l -> controller.buttonPressed(ButtonType.Send));
         add(sendButton);
     }
 
@@ -101,6 +96,10 @@ public class SouthPanel extends JPanel {
 
     public String getTxtMsg() {
         return txtMsg.getText();
+    }
+
+    public void setTxtMsg(String txtMsg) {
+        this.txtMsg.setText(txtMsg);
     }
 
 }

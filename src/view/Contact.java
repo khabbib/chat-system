@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Contact {
-    JFrame frame = new JFrame("Contact");
+    JFrame frame = new JFrame("Contact List");
     JList<String> contacts = new JList<>();
 
     public Contact(){

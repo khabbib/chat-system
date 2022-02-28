@@ -31,4 +31,16 @@ public class MainFrame extends JFrame{
 
         this.setVisible(true);
     }
+
+    public String getTxtMsg() {
+        return mainPanel.getsPanel().getTxtMsg();
+    }
+
+    public void setTxtMsg(String txtMsg) {
+        mainPanel.getsPanel().setTxtMsg(txtMsg);
+    }
+
+    public void setTxtScreen(String txtScreen) {
+        mainPanel.getcLPanel().setTxtScreen(txtScreen);
+    }
 }

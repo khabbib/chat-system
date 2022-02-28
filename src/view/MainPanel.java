@@ -31,4 +31,35 @@ public class MainPanel extends JPanel {
         add(sPanel);
     }
 
+    public NorthPanel getnPanel() {
+        return nPanel;
+    }
+
+    public void setnPanel(NorthPanel nPanel) {
+        this.nPanel = nPanel;
+    }
+
+    public CenterLPanel getcLPanel() {
+        return cLPanel;
+    }
+
+    public void setcLPanel(CenterLPanel cLPanel) {
+        this.cLPanel = cLPanel;
+    }
+
+    public CenterRPanel getcRPanel() {
+        return cRPanel;
+    }
+
+    public void setcRPanel(CenterRPanel cRPanel) {
+        this.cRPanel = cRPanel;
+    }
+
+    public SouthPanel getsPanel() {
+        return sPanel;
+    }
+
+    public void setsPanel(SouthPanel sPanel) {
+        this.sPanel = sPanel;
+    }
 }

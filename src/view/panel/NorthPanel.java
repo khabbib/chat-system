@@ -1,15 +1,15 @@
 package view.panel;
 
 import controller.Controller;
-import controller.Login;
+import view.ButtonType;
 import view.Contact;
+import view.RoundedBorder;
+import view.ViewUtilities;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 
 public class NorthPanel extends JPanel {
 
@@ -17,7 +17,9 @@ public class NorthPanel extends JPanel {
     private int height;
     private Controller controller;
 
-    private Contact contact;
+    private JLabel lblTitle;
+    private JLabel lblAuthors;
+    private JLabel lblVersion;
 
     private JButton btnContactlist;
     private JButton btnLogout;
@@ -33,38 +35,50 @@ public class NorthPanel extends JPanel {
     }
 
     private void setUp() {
+        lblHeader();
         btnContact();
         btnLogout();
     }
 
+    private void lblHeader() {
+        lblTitle = new JLabel("@Chat System");
+        lblAuthors = new JLabel("@Authors: S.O.K.K.E.N.");
+        lblVersion = new JLabel("@Version: 7.0");
+
+        lblTitle.setBounds(width / 2, 5, 180,30);
+        lblAuthors.setBounds(width / 2, 20, 180,30);
+        lblVersion.setBounds(width / 2, 35, 180,30);
+
+        lblTitle.setForeground(Color.gray);
+        lblTitle.setFont(new Font("Arial", Font.PLAIN, 12));
+
+        lblAuthors.setForeground(Color.gray);
+        lblAuthors.setFont(new Font("Arial", Font.PLAIN, 12));
+
+        lblVersion.setForeground(Color.gray);
+        lblVersion.setFont(new Font("Arial", Font.PLAIN, 12));
+
+        add(lblTitle);
+        add(lblAuthors);
+        add(lblVersion);
+    }
+
     private void btnContact() {
         btnContactlist = new JButton("Contact list");
-        btnContactlist.setBounds(50, height/3, 100,30);
+        btnContactlist.setBounds(50, height/3, 120,30);
+        //btnContactlist.setBorder(new RoundedBorder(20));
         btnContactlist.setFocusable(false);
-
-        btnContactlist.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                contact = new Contact();
-            }
-        });
-
+        btnContactlist.addActionListener(l -> controller.buttonPressed(ButtonType.ContactList));
         this.add(btnContactlist);
     }
 
     private void btnLogout() {
-        btnLogout = new JButton("Logout ;(");
+        btnLogout = new JButton("Logout");
         btnLogout.setBounds(width - 150, height/3, 100,30);
         btnLogout.setForeground(Color.red);
         btnLogout.setFocusable(false);
 
-        btnLogout.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-                //new Login();
-            }
-        });
+        btnLogout.addActionListener(l -> controller.buttonPressed(ButtonType.Logout));
 
         this.add(btnLogout);
     }

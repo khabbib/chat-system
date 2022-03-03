@@ -2,19 +2,18 @@ package view.panel;
 
 import controller.Controller;
 import view.ButtonType;
-import view.Contact;
 import view.ViewUtilities;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
 
 public class CenterRPanel extends JPanel {
 
     private int width;
     private int height;
     private JList<String> userList;
+    private JButton btnContactlist;
     private JButton btnAddToContact;
     private String[] str = {"heel", "Sabb", "Mortin", "Harry"};
 
@@ -36,6 +35,7 @@ public class CenterRPanel extends JPanel {
 
     public void setUp() {
         activeUsers();
+        btnContact();
         btnAddToContact();
     }
 
@@ -52,9 +52,19 @@ public class CenterRPanel extends JPanel {
         this.add(userList);
     }
 
+    private void btnContact() {
+        btnContactlist = new JButton("Contacts");
+        btnContactlist.setBounds(-5, height - 30, 90,30);
+        btnContactlist.setFocusable(false);
+
+        btnContactlist.addActionListener(l -> controller.buttonPressed(ButtonType.ContactList));
+
+        this.add(btnContactlist);
+    }
+
     private void btnAddToContact() {
-        btnAddToContact = new JButton("Add to contact");
-        btnAddToContact.setBounds(40, height - 30, 120,30);
+        btnAddToContact = new JButton("Add contacts");
+        btnAddToContact.setBounds(80, height - 30, 110,30);
         btnAddToContact.setFocusable(false);
 
         btnAddToContact.addActionListener(l -> controller.buttonPressed(ButtonType.ContactAdd));

@@ -24,7 +24,7 @@ public class MainPanel extends JPanel {
         cLPanel = new CenterLPanel(width - (width / 3), height - (height / 2) + 30, controller);
         add(cLPanel);
 
-        cRPanel = new CenterRPanel((width / 5) + 20, height - (height / 2) + 30, controller);
+        cRPanel = new CenterRPanel((width / 5) + 25, height - (height / 2) + 30, controller);
         add(cRPanel);
 
         sPanel = new SouthPanel(width, height - (height / 8), controller);

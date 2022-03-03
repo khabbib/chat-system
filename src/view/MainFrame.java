@@ -43,4 +43,8 @@ public class MainFrame extends JFrame{
     public void setTxtScreen(String txtScreen) {
         mainPanel.getcLPanel().setTxtScreen(txtScreen);
     }
+
+    public void updateMessageScreen(String[] stringList) {
+        mainPanel.getcLPanel().updateMessageScreen(stringList);
+    }
 }

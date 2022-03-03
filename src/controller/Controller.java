@@ -11,14 +11,10 @@ public class Controller {
     //private ModelManager model;
     private MainFrame view;
 
-    public Controller() {
-
-    }
-
-    public Controller(String userName, String userImage) {
+    public Controller(User user) {
         view = new MainFrame(this);
 
-        user = new User(userName, userImage);
+        this.user = user;
         String userN = user.getUserName();
         System.out.println("Welcome, " + userN + "!");
     }
@@ -49,10 +45,39 @@ public class Controller {
             case Send:
                 System.out.println("Button 'Send' is clicked!");
 
-                view.setTxtScreen(view.getTxtMsg());
+                // Text Area
+                //view.setTxtScreen(view.getTxtMsg());
+                //view.setTxtMsg("");
+
+                // JList
+                addMessage(view.getTxtMsg());
                 view.setTxtMsg("");
+                view.updateMessageScreen(getMessageString());
 
                 break;
         }
+    }
+
+    private String[] messages = new String[100];
+    private int nbrOfMessages = 0;
+
+    public void addMessage(String message) {
+
+        for(int i = 0; i <= nbrOfMessages; i++){
+            if(messages[i] == null){
+                messages[i] = message;
+            }
+        }
+        nbrOfMessages++;
+    }
+
+    public String[] getMessageString() {
+        String[] infoStrings = new String[nbrOfMessages];
+        for(int i = 0; i < messages.length; i++){
+            if(messages[i] != null){
+                infoStrings[i] = messages[i].toString();
+            }
+        }
+        return infoStrings;
     }
 }

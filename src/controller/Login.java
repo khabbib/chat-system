@@ -99,6 +99,9 @@ public class Login extends JFrame {
         contentPane.add(pic);
         contentPane.add(btnfile);
 
+        // Snabb sätt att få GUI fönstret
+        //new Controller("admin", "admin.png");
+
         //ENTER KNAPP
         JButton btnEnter = new JButton("Enter");
         btnEnter.addActionListener(new ActionListener() {
@@ -113,7 +116,7 @@ public class Login extends JFrame {
                             setUserName(namevalue);
                             System.out.println(namevalue);
                             User user = new User(namevalue, "profile.png");
-                            new Controller(namevalue, "pfp.png");
+                            new Controller(user);
                             //Main m = new Main();
                             //m.getSetUserName(namevalue);
                             //String [] arguments = new String []{""}; // ta in en parameter typ namnet eller något

@@ -11,13 +11,23 @@ public class Client {
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
     private String username;
+    private String image;
 
     public Client(Socket socket, String username)  {
         try {
             this.socket = socket;
-            this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             this.username = username;
+            this.image = "images/gubbe.jpg";
+
+            bufferedWriter.write(username);
+            bufferedWriter.newLine();
+            bufferedWriter.write(image);
+            bufferedWriter.flush();
+
+            this.listenForMessage();
+            this.sendMessage();
 
         } catch (IOException e) {
 
@@ -89,7 +99,7 @@ public class Client {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Skriv in ditt användarnamn för att delta i gruppchatten: ");
         String username = scanner.nextLine();
-        Socket socket = new Socket("localhost", 3344);
+        Socket socket = new Socket("localhost", 4433);
         Client client = new Client(socket, username);
         client.listenForMessage();
         client.sendMessage();

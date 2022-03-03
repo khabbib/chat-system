@@ -1,11 +1,14 @@
 package model.server;
 
-import javax.imageio.IIOException;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+
+import model.User;
 import model.client.ClientHandler;
 
 public class Server {
@@ -13,6 +16,8 @@ public class Server {
     private ServerSocket serverSocket;
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
+
+    private ArrayList<User> clients;
 
     public Server(ServerSocket serverSocket)
     {
@@ -27,10 +32,22 @@ public class Server {
             {
                 //Här väntas server till någon har kopplats upp sig på servern
                 //När någon kopplar sig till servern så skapas ett ny socket som används för att communicera med clienten
-                Socket socket = serverSocket.accept();
+
+                Socket client = serverSocket.accept();
                 System.out.println("En ny klient har kopplat upp sig");
 
-                ClientHandler clientHandler = new ClientHandler(socket);
+                BufferedReader bis = new BufferedReader(new InputStreamReader(client.getInputStream()));
+
+                String nickname = bis.readLine();
+                String image = bis.readLine();
+
+                User newUser = new User(nickname, image);
+                System.out.println(newUser.getUserName());
+                System.out.println(newUser.getUserImage());
+                this.clients = new ArrayList<User>();
+                this.clients.add(newUser);
+
+                ClientHandler clientHandler = new ClientHandler(client);
 
                 Thread thread = new Thread(clientHandler);
                 thread.start();
@@ -56,7 +73,7 @@ public class Server {
     }
 
     public static void main(String[] args) throws IOException {
-        ServerSocket serverSocket = new ServerSocket(3344);
+        ServerSocket serverSocket = new ServerSocket(4433);
         Server server = new Server(serverSocket);
         server.startServer();
     }

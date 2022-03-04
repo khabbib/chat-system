@@ -1,30 +1,25 @@
 package view.panel;
 
-import controller.Controller;
+import model.client.Client;
 import view.ButtonType;
-import view.Contact;
-import view.RoundedBorder;
-import view.ViewUtilities;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class NorthPanel extends JPanel {
 
     private int width;
     private int height;
-    private Controller controller;
+    private Client client;
 
     private JLabel lblTitle;
     private JLabel lblAuthors;
     private JLabel lblVersion;
 
-    private JButton btnLogout;
 
-    public NorthPanel(int width, int height, Controller controller) {
-        this.controller = controller;
+
+    public NorthPanel(int width, int height, Client client) {
+        this.client = client;
         this.setLayout(null);
         this.width = width;
         this.height = height;
@@ -35,47 +30,28 @@ public class NorthPanel extends JPanel {
 
     private void setUp() {
         lblHeader();
-        btnLogout();
     }
 
     private void lblHeader() {
-        lblTitle = new JLabel("@Chat System");
+        lblTitle = new JLabel("ChatSystem");
         lblAuthors = new JLabel("@Authors: S.O.K.K.E.N.");
-        lblVersion = new JLabel("@Version: 7.0");
+        lblVersion = new JLabel("@Version: 10.0.0");
 
-        lblTitle.setBounds(width / 2, 5, 180,30);
-        lblAuthors.setBounds(width / 2, 20, 180,30);
-        lblVersion.setBounds(width / 2, 35, 180,30);
+        lblTitle.setBounds(20, 20, 180,30);
+        lblAuthors.setBounds(180, 20, 180,30);
+        lblVersion.setBounds(600, 20, 180,30);
 
         lblTitle.setForeground(Color.gray);
-        lblTitle.setFont(new Font("Arial", Font.PLAIN, 12));
+        lblTitle.setFont(new Font("Arial", Font.PLAIN, 26));
 
         lblAuthors.setForeground(Color.gray);
-        lblAuthors.setFont(new Font("Arial", Font.PLAIN, 12));
+        lblAuthors.setFont(new Font("Arial", Font.PLAIN, 16));
 
         lblVersion.setForeground(Color.gray);
-        lblVersion.setFont(new Font("Arial", Font.PLAIN, 12));
+        lblVersion.setFont(new Font("Arial", Font.PLAIN, 16));
 
         add(lblTitle);
         add(lblAuthors);
         add(lblVersion);
-    }
-
-    private void btnLogout() {
-        btnLogout = new JButton("Logout");
-        btnLogout.setBounds(width - 150, height/3, 100,30);
-        btnLogout.setForeground(Color.red);
-        btnLogout.setFocusable(false);
-
-        btnLogout.addActionListener(l -> controller.buttonPressed(ButtonType.Logout));
-
-        this.add(btnLogout);
-    }
-
-    // border
-
-    // getter and setter
-    public JButton getBtnLogout() {
-        return btnLogout;
     }
 }

@@ -1,12 +1,10 @@
 package view.panel;
 
-import controller.Controller;
+import model.client.Client;
 import view.ButtonType;
-import view.MainPanel;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,7 +16,7 @@ public class SouthPanel extends JPanel {
 
     private int width;
     private int height;
-    private Controller controller;
+    private Client client;
 
     private final int imageSize = 75;
 
@@ -26,10 +24,12 @@ public class SouthPanel extends JPanel {
     private JButton chooseFile;
     private JButton sendButton;
 
+    private JButton btnLogout;
+
     private JLabel imageMsgArea;
 
-    public SouthPanel(int width, int height, Controller controller) {
-        this.controller = controller;
+    public SouthPanel(int width, int height, Client client) {
+        this.client = client;
         this.setLayout(null);
         this.width = width;
         this.height = height;
@@ -42,6 +42,7 @@ public class SouthPanel extends JPanel {
         txtMsg();
         btnFile();
         btnSendMsg();
+        btnLogout();
         lblImageMsgArea();
     }
 
@@ -53,7 +54,7 @@ public class SouthPanel extends JPanel {
             // send message on Enter
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    controller.buttonPressed(ButtonType.Send);
+                    client.buttonPressed(ButtonType.Send);
                 }
             }
         });
@@ -62,17 +63,19 @@ public class SouthPanel extends JPanel {
     }
 
     private void btnFile() {
-        chooseFile = new JButton();
-        chooseFile.setBounds(400,30,80,30);
-        chooseFile.setText("File");
+        ImageIcon imageIcon = new ImageIcon("images_gui/gallery.png");
+        Image image = imageIcon.getImage();
+        Image newImage = image.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
+        imageIcon = new ImageIcon(newImage);
+
+        chooseFile = new JButton(imageIcon);
+        chooseFile.setBounds(400,30,30,30);
         chooseFile.setFocusable(false);
 
         chooseFile.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser file = new JFileChooser();
-                FileNameExtensionFilter filter = new FileNameExtensionFilter("Pictures", "jpg", "png");
-                file.setFileFilter(filter);
                 file.showOpenDialog(null);
                 File src = file.getSelectedFile();
                 try {
@@ -88,19 +91,39 @@ public class SouthPanel extends JPanel {
             }
         });
 
-        chooseFile.addActionListener(l -> controller.buttonPressed(ButtonType.File));
+        chooseFile.addActionListener(l -> client.buttonPressed(ButtonType.File));
 
         add(chooseFile);
 
     }
 
     private void btnSendMsg() {
-        sendButton = new JButton();
-        sendButton.setBounds(500,30,80,30);
-        sendButton.setText("Send");
+        ImageIcon imageIcon = new ImageIcon("images_gui/send.png");
+        Image image = imageIcon.getImage();
+        Image newImage = image.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
+        imageIcon = new ImageIcon(newImage);
+
+        sendButton = new JButton(imageIcon);
+        sendButton.setBounds(450,30,30,30);
         sendButton.setFocusable(false);
-        sendButton.addActionListener(l -> controller.buttonPressed(ButtonType.Send));
+        sendButton.addActionListener(l -> client.buttonPressed(ButtonType.Send));
         add(sendButton);
+    }
+
+    private void btnLogout() {
+        ImageIcon imageIcon = new ImageIcon("images_gui/logout.png");
+        Image image = imageIcon.getImage();
+        Image newImage = image.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
+        imageIcon = new ImageIcon(newImage);
+
+        btnLogout = new JButton(imageIcon);
+        btnLogout.setBounds(500, 30, 30,30);
+        btnLogout.setForeground(Color.red);
+        btnLogout.setFocusable(false);
+
+        btnLogout.addActionListener(l -> client.buttonPressed(ButtonType.Logout));
+
+        this.add(btnLogout);
     }
 
     private void lblImageMsgArea() {

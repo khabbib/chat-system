@@ -1,6 +1,6 @@
 package view.panel;
 
-import controller.Controller;
+import model.client.Client;
 import view.ViewUtilities;
 
 import javax.swing.*;
@@ -10,20 +10,19 @@ public class CenterLPanel extends JPanel {
 
     private int width;
     private int height;
-    private Controller controller;
+    private Client client;
 
     private ViewUtilities viewUtilities;
     private Font mainFont;
     private JTextArea txtScreen;
     private JList<Object> txtMessageScreen;
-    private JScrollBar sb;
     JScrollPane s;
 
-    public CenterLPanel(int width, int height, Controller controller) {
+    public CenterLPanel(int width, int height, Client client) {
         viewUtilities = new ViewUtilities();
         Color bgColor = viewUtilities.getMainFrameBackgroundColor();
         this.setBackground(bgColor);
-        this.controller = controller;
+        this.client = client;
         this.setLayout(null);
         this.width = width;
         this.height = height;
@@ -35,8 +34,6 @@ public class CenterLPanel extends JPanel {
         s.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         s.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         s.setBounds(0,30, width - 10, height - 10);
-
-        sb = s.getVerticalScrollBar();
         //txtMessageScreen.setSelectionMode(DefaultListSelectionModel.SINGLE_SELECTION);
         this.add(s);
     }
@@ -73,14 +70,7 @@ public class CenterLPanel extends JPanel {
 //        scrollPane.setViewportView(txtMessageScreen);
 //        txtMessageScreen.setLayoutOrientation(JList.VERTICAL);
 
-
-
-
-
-
         this.add(txtMessageScreen);
-
-
 
     }
 
@@ -92,6 +82,5 @@ public class CenterLPanel extends JPanel {
     }
     public void updateMessageScreen(String[] messageScreenTxt) {
         txtMessageScreen.setListData(messageScreenTxt);
-        sb.setValue(sb.getMaximum());       //Scrollar längst ner på sidan efter varje uppdatering.
     }
 }

@@ -1,30 +1,32 @@
 package view.panel;
 
-import controller.Controller;
+import model.client.Client;
 import view.ButtonType;
 import view.ViewUtilities;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-
+import java.io.File;
+import java.util.ArrayList;
 
 public class CenterRPanel extends JPanel {
 
     private int width;
     private int height;
     private JList<String> userList;
-    private JButton btnContactlist;
+    private JButton btnContactList;
     private JButton btnAddToContact;
-    private String[] str = {"heel", "Sabb", "Mortin", "Harry"};
+    private String[] str = {"Harry", "Barry", "Melly", "Delly"};
 
-    private Controller controller;
+    private Client client;
 
-    public CenterRPanel(int width, int height, Controller controller) {
+    public CenterRPanel(int width, int height, Client client) {
         ViewUtilities viewUtilities = new ViewUtilities();
         Color bgColor = viewUtilities.getMainFrameBackgroundColor();
         this.setBackground(bgColor);
 
-        this.controller = controller;
+        this.client = client;
         this.setLayout(null);
         this.width = width;
         this.height = height;
@@ -53,22 +55,37 @@ public class CenterRPanel extends JPanel {
     }
 
     private void btnContact() {
-        btnContactlist = new JButton("Contacts");
-        btnContactlist.setBounds(-5, height - 30, 90,30);
-        btnContactlist.setFocusable(false);
+        ImageIcon imageIcon = new ImageIcon("images_gui/contacts.png");
+        Image image = imageIcon.getImage();
+        Image newImage = image.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
+        imageIcon = new ImageIcon(newImage);
 
-        btnContactlist.addActionListener(l -> controller.buttonPressed(ButtonType.ContactList));
-
-        this.add(btnContactlist);
+        btnContactList = new JButton(imageIcon);
+        btnContactList.setBounds(0, height - 30, 30,30);
+        btnContactList.setFocusable(false);
+        btnContactList.addActionListener(l -> client.buttonPressed(ButtonType.ContactList));
+        this.add(btnContactList);
     }
 
     private void btnAddToContact() {
-        btnAddToContact = new JButton("Add contacts");
-        btnAddToContact.setBounds(80, height - 30, 110,30);
+        ImageIcon imageIcon = new ImageIcon("images_gui/contacts_add.png");
+        Image image = imageIcon.getImage();
+        Image newImage = image.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
+        imageIcon = new ImageIcon(newImage);
+
+        btnAddToContact = new JButton(imageIcon);
+        btnAddToContact.setBounds(50, height - 30, 30,30);
         btnAddToContact.setFocusable(false);
-
-        btnAddToContact.addActionListener(l -> controller.buttonPressed(ButtonType.ContactAdd));
-
+        btnAddToContact.addActionListener(l -> client.buttonPressed(ButtonType.ContactAdd));
         this.add(btnAddToContact);
+    }
+
+    public void setUserList(ArrayList<String> users) {
+        DefaultListModel listModel = new DefaultListModel();
+        for (int i = 0; i < users.size(); i++) {
+            listModel.addElement(users.get(i));
+            System.out.println(users.get(i));
+        }
+        userList.setModel(listModel);
     }
 }

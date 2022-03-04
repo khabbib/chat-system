@@ -1,12 +1,13 @@
 package view;
 
-import controller.Controller;
+import model.client.Client;
 import view.panel.CenterLPanel;
 import view.panel.CenterRPanel;
 import view.panel.NorthPanel;
 import view.panel.SouthPanel;
 
 import javax.swing.*;
+import java.util.ArrayList;
 
 public class MainPanel extends JPanel {
     private NorthPanel nPanel;
@@ -14,20 +15,20 @@ public class MainPanel extends JPanel {
     private CenterRPanel cRPanel;
     private SouthPanel sPanel;
 
-    public MainPanel(int width, int height, Controller controller) {
+    public MainPanel(int width, int height, Client client) {
         super(null);
         this.setSize(width, height);
 
-        nPanel = new NorthPanel(width, height / 8, controller);
+        nPanel = new NorthPanel(width, height / 8, client);
         add(nPanel);
 
-        cLPanel = new CenterLPanel(width - (width / 3), height - (height / 2) + 30, controller);
+        cLPanel = new CenterLPanel(width - (width / 3), height - (height / 2) + 30, client);
         add(cLPanel);
 
-        cRPanel = new CenterRPanel((width / 5) + 25, height - (height / 2) + 30, controller);
+        cRPanel = new CenterRPanel((width / 5) + 20, height - (height / 2) + 30, client);
         add(cRPanel);
 
-        sPanel = new SouthPanel(width, height - (height / 8), controller);
+        sPanel = new SouthPanel(width, height - (height / 8), client);
         add(sPanel);
     }
 
@@ -62,4 +63,6 @@ public class MainPanel extends JPanel {
     public void setsPanel(SouthPanel sPanel) {
         this.sPanel = sPanel;
     }
+
+    public void setList(ArrayList<String> userList){cRPanel.setUserList(userList);}
 }

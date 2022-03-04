@@ -1,4 +1,4 @@
-package controller;
+package model;
 import model.User;
 
 import java.awt.*;
@@ -9,26 +9,23 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 //  import com.sun.tools.javac.Main;
 
 public class Login extends JFrame {
 
     private JFrame frame;
-    private JPanel mainPanel, subPanel1, subPanel2;
     private JPanel contentPane;
     private JTextField userName;
-    private JPasswordField password;
-    private JButton button;
-
     private File src;
     private String srcName;
     private ImageIcon imageIcon;
+    private static User user;
+    private boolean done = false;
 
     public Login() {
-
-        frame = new JFrame("Chat System");
+        super("Chat Client");
+        frame = new JFrame();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
         setBounds(100, 100, 350, 500);
@@ -72,29 +69,22 @@ public class Login extends JFrame {
         Border b = BorderFactory.createLineBorder(new Color(222, 222, 222), 1);
         pic.setBorder(b);
 
+        // FILE BUTTON
         JButton btnfile = new JButton("File");
         btnfile.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JFileChooser file = new JFileChooser();
-                FileNameExtensionFilter filter = new FileNameExtensionFilter("Pictures", "jpg", "png");
-                file.setFileFilter(filter);
                 file.showOpenDialog(null);
                 src = file.getSelectedFile();
-                // path = src.getAbsoluteFile();
-                // System.out.println(path);
-                // JLabel pic = new JLabel();
                 try{
-                    //ImageIcon ii = new ImageIcon(ImageIO.read(new File(String.valueOf(src.getAbsoluteFile()))));
                     imageIcon = new ImageIcon(ImageIO.read(new File(src.getAbsolutePath())));
                     Image image = imageIcon.getImage();
                     Image newImage = image.getScaledInstance(100, 100, java.awt.Image.SCALE_SMOOTH);
                     imageIcon = new ImageIcon(newImage);
-                    //btnStaff.setIcon(ii);
                     pic.setIcon(imageIcon);
                 }catch (Exception ex){
                     ex.printStackTrace();
                 }
-
             }
         });
 
@@ -102,10 +92,7 @@ public class Login extends JFrame {
         contentPane.add(pic);
         contentPane.add(btnfile);
 
-        // Snabb sätt att få GUI fönstret
-        //new Controller("admin", "admin.png");
-
-        //ENTER KNAPP
+        // ENTER BUTTON
         JButton btnEnter = new JButton("Enter");
         btnEnter.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
@@ -113,24 +100,18 @@ public class Login extends JFrame {
 
                     try {
                         srcName = src.getName();
-
                         if(!userName.getText().equals("") && !srcName.equals("")) {
-                            String namevalue = userName.getText(); // tar in namnet som skriv i username field
+                            String namevalue = userName.getText();
                             setUserName(namevalue);
-                            System.out.println(namevalue);
-                            User user = new User(namevalue, "profile.png");
-                            new Controller(user);
-                            //Main m = new Main();
-                            //m.getSetUserName(namevalue);
-                            //String [] arguments = new String []{""}; // ta in en parameter typ namnet eller något
-                            //m.main(arguments);
+                            //System.out.println(namevalue);
+                            user = new User(namevalue, imageIcon);
+                            setUser(user);
                             dispose();
+                            setDone(true);
                         } else {
                             JOptionPane.showMessageDialog(null, "Please choose a username!");
                         }
-
                     } catch (Exception exeption) {
-                        //exeption.printStackTrace();
                         JOptionPane.showMessageDialog(null, "Please choose an image!");
                     }
                 }
@@ -145,24 +126,40 @@ public class Login extends JFrame {
     public String getUserName() {
         return userName.getText();
     }
-
     public void setUserName(String username) {
         userName.setText(username);
     }
 
-    // main
-    public static void main(String[] args) {
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    Login frame = new Login();
-                    frame.setVisible(true);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+    public User getUser() {
+        return user;
     }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public boolean isDone() {
+        return done;
+    }
+
+    public void setDone(boolean done) {
+        this.done = done;
+    }
+
+    // main
+    //public static void main(String[] args) throws IOException {
+        //EventQueue.invokeLater(new Runnable() {
+            //public void run() {
+                //try {
+                    //Login frame = new Login();
+                    //frame.setVisible(true);
+
+                //} catch (Exception e) {
+                    //e.printStackTrace();
+                //}
+            //}
+        //});
+    //}
 }
 
 

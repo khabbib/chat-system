@@ -1,9 +1,10 @@
 package view;
 
-import controller.Controller;
+import model.client.Client;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class MainFrame extends JFrame{
 
@@ -11,19 +12,19 @@ public class MainFrame extends JFrame{
     private final int height = 600;
 
     private MainPanel mainPanel;
-    private Controller controller;
+    private Client client;
 
     private ViewUtilities viewUtilities;
     private Color color;
 
-    public MainFrame(Controller controller) {
-        super("Chat System");
+    public MainFrame(Client client) {
+        super("Chat Client");
         viewUtilities = new ViewUtilities();
-        this.controller = controller;
+        this.client = client;
         this.setResizable(false);
         this.setDefaultCloseOperation(this.EXIT_ON_CLOSE);
         this.setSize(width, height);
-        this.mainPanel = new MainPanel(width, height, controller);
+        this.mainPanel = new MainPanel(width, height, client);
         this.setContentPane(mainPanel);
 
         color = viewUtilities.getMainFrameBackgroundColor();
@@ -47,4 +48,6 @@ public class MainFrame extends JFrame{
     public void updateMessageScreen(String[] stringList) {
         mainPanel.getcLPanel().updateMessageScreen(stringList);
     }
+
+    public void setList(ArrayList<String> userList) {mainPanel.setList(userList);}
 }

@@ -5,6 +5,7 @@ import view.ButtonType;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -76,6 +77,8 @@ public class SouthPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser file = new JFileChooser();
+                FileNameExtensionFilter filter = new FileNameExtensionFilter("Pictures", "jpg", "png");
+                file.setFileFilter(filter);     //Fil filter för endas bilder.
                 file.showOpenDialog(null);
                 File src = file.getSelectedFile();
                 try {

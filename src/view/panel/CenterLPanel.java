@@ -17,6 +17,7 @@ public class CenterLPanel extends JPanel {
     private JTextArea txtScreen;
     private JList<Object> txtMessageScreen;
     JScrollPane s;
+    private JScrollBar sb;
 
     public CenterLPanel(int width, int height, Client client) {
         viewUtilities = new ViewUtilities();
@@ -34,6 +35,8 @@ public class CenterLPanel extends JPanel {
         s.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         s.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         s.setBounds(0,30, width - 10, height - 10);
+
+        sb = s.getVerticalScrollBar();
         //txtMessageScreen.setSelectionMode(DefaultListSelectionModel.SINGLE_SELECTION);
         this.add(s);
     }
@@ -82,5 +85,6 @@ public class CenterLPanel extends JPanel {
     }
     public void updateMessageScreen(String[] messageScreenTxt) {
         txtMessageScreen.setListData(messageScreenTxt);
+        sb.setValue(sb.getMaximum());       //Scrollar längst ner när nya meddelanden överskrider skärmgräns.
     }
 }

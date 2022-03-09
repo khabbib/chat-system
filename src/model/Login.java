@@ -9,6 +9,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 //  import com.sun.tools.javac.Main;
 
@@ -74,6 +75,8 @@ public class Login extends JFrame {
         btnfile.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JFileChooser file = new JFileChooser();
+                FileNameExtensionFilter filter = new FileNameExtensionFilter("Pictures", "jpg", "png");
+                file.setFileFilter(filter);     //Fil filter, du kan bara använda bilder för profilbild.
                 file.showOpenDialog(null);
                 src = file.getSelectedFile();
                 try{

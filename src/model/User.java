@@ -4,16 +4,19 @@ import javax.swing.*;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class User implements Serializable {
     private String userName;
     private ImageIcon userImage;
+    private ArrayList<String> contacts;
     private transient PrintStream streamOut;
     private transient InputStream streamIn;
 
     public User(String userName, ImageIcon userImage) {
         this.userName = userName;
         this.userImage = userImage;
+        this.contacts = new ArrayList<>();
     }
 
     public String getUserName() {
@@ -44,5 +47,13 @@ public class User implements Serializable {
 
     public void setStreamIn(InputStream streamIn) {
         this.streamIn = streamIn;
+    }
+
+    public void addContact(String contact) {
+        contacts.add(contact);
+    }
+
+    public ArrayList<String> getContacts() {
+        return contacts;
     }
 }

@@ -88,4 +88,8 @@ public class CenterRPanel extends JPanel {
         }
         userList.setModel(listModel);
     }
+
+    public JList<String> getUserList() {
+        return userList;
+    }
 }

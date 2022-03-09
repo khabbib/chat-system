@@ -50,4 +50,8 @@ public class MainFrame extends JFrame{
     }
 
     public void setList(ArrayList<String> userList) {mainPanel.setList(userList);}
+
+    public JList getList() {
+        return mainPanel.getcRPanel().getUserList();
+    }
 }

@@ -84,11 +84,12 @@ public class Client {
         switch (button) {
             case ContactList:
                 System.out.println("Button 'Contact' is clicked!");
-                Contact contact = new Contact();
+                Contact contact = new Contact(user.getContacts().toArray(new String[0]));
                 break;
 
             case ContactAdd:
                 System.out.println("Button 'Add contact' is clicked!");
+                user.addContact((String) view.getList().getSelectedValue());        //Kontaktbok tillagd, värden sparas i User
                 break;
 
             case File:

@@ -28,6 +28,7 @@ public class SouthPanel extends JPanel {
     private JButton btnLogout;
 
     private JLabel imageMsgArea;
+    private ImageIcon ImgToSend;
 
     public SouthPanel(int width, int height, Client client) {
         this.client = client;
@@ -78,7 +79,7 @@ public class SouthPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 JFileChooser file = new JFileChooser();
                 FileNameExtensionFilter filter = new FileNameExtensionFilter("Pictures", "jpg", "png");
-                file.setFileFilter(filter);     //Fil filter för endas bilder.
+                file.setFileFilter(filter);     //Fil filter, du kan bara använda bilder.
                 file.showOpenDialog(null);
                 File src = file.getSelectedFile();
                 try {
@@ -87,6 +88,7 @@ public class SouthPanel extends JPanel {
                     Image newImage = image.getScaledInstance(imageSize, imageSize, java.awt.Image.SCALE_SMOOTH);
                     ii = new ImageIcon(newImage);
                     imageMsgArea.setIcon(ii);
+                    ImgToSend = ii;
                     txtMsg.setText(src.getName());
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -143,4 +145,7 @@ public class SouthPanel extends JPanel {
         this.txtMsg.setText(txtMsg);
     }
 
+    public ImageIcon getImgMsg() {
+        return ImgToSend;
+    }
 }

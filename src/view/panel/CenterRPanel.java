@@ -1,13 +1,12 @@
 package view.panel;
 
+import model.User;
 import model.client.Client;
 import view.ButtonType;
 import view.ViewUtilities;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
 import java.util.ArrayList;
 
 public class CenterRPanel extends JPanel {
@@ -15,9 +14,13 @@ public class CenterRPanel extends JPanel {
     private int width;
     private int height;
     private JList<String> userList;
+    private ArrayList<User> contactUsers;
+
+    private DefaultListModel<String> listModel = new DefaultListModel<>();
     private JButton btnContactList;
     private JButton btnAddToContact;
-    private String[] str = {"Harry", "Barry", "Melly", "Delly"};
+    private int nbrOfUsers = 0;
+    private String[] str = {"Harry", "Barry", "Teddy", "Melly"}; // hanterar 100 klienter
 
     private Client client;
 
@@ -48,7 +51,7 @@ public class CenterRPanel extends JPanel {
         lblActiveUsers.setFont(new Font("Arial", Font.BOLD, 12));
         add(lblActiveUsers);
 
-        userList = new JList<String>(str);
+        userList = new JList<String>(listModel);
         userList.setOpaque(true);
         userList.setBounds(0,20,width, height - 60);
         this.add(userList);
@@ -80,16 +83,22 @@ public class CenterRPanel extends JPanel {
         this.add(btnAddToContact);
     }
 
-    public void setUserList(ArrayList<String> users) {
-        DefaultListModel listModel = new DefaultListModel();
-        for (int i = 0; i < users.size(); i++) {
-            listModel.addElement(users.get(i));
-            System.out.println(users.get(i));
-        }
+    public void setUserList(String users) {
+        listModel.addElement(users);
+        //contactUsers = users;
         userList.setModel(listModel);
     }
 
-    public JList<String> getUserList() {
-        return userList;
+    public User getUserAt(int index){
+        if(!(index < nbrOfUsers)){
+            return null;
+        }
+        else {
+            return contactUsers.get(index);
+        }
+    }
+
+    public int getUserListIndex() {
+        return userList.getSelectedIndex();
     }
 }

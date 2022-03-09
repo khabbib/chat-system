@@ -1,10 +1,12 @@
 package view.panel;
 
+import model.Message;
 import model.client.Client;
 import view.ViewUtilities;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class CenterLPanel extends JPanel {
 
@@ -16,6 +18,7 @@ public class CenterLPanel extends JPanel {
     private Font mainFont;
     private JTextArea txtScreen;
     private JList<Object> txtMessageScreen;
+    private DefaultListModel<Object> modelMsg = new DefaultListModel<>();
     JScrollPane s;
     private JScrollBar sb;
 
@@ -61,7 +64,7 @@ public class CenterLPanel extends JPanel {
 //        txtScreen.setEditable(false);
 //        this.add(txtScreen);
 
-        txtMessageScreen = new JList<>();
+        txtMessageScreen = new JList<>(modelMsg);
         txtMessageScreen.setLocation(0, 20);
         txtMessageScreen.setSize(width, height - 20);
         txtMessageScreen.setFont(mainFont);
@@ -83,8 +86,22 @@ public class CenterLPanel extends JPanel {
     public void setTxtScreen(String txtScreen) {
         this.txtScreen.setText(txtScreen);
     }
-    public void updateMessageScreen(String[] messageScreenTxt) {
-        txtMessageScreen.setListData(messageScreenTxt);
+
+
+    public void updateMessageScreen(Object msg) {
+        if (msg instanceof Message){
+
+            modelMsg.addElement(((Message)msg).getSendare() + " : " + ((Message)msg).getText());
+            if (((Message)msg).getIcon() != null){
+                modelMsg.addElement(((Message)msg).getIcon());
+            }
+        }
+        else if(msg instanceof String){
+            modelMsg.addElement(msg.toString());
+        }
+
+        //txtMessageScreen = new JList<>(modelMsg);
         sb.setValue(sb.getMaximum());       //Scrollar längst ner när nya meddelanden överskrider skärmgräns.
+
     }
 }

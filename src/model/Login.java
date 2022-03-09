@@ -85,6 +85,7 @@ public class Login extends JFrame {
                     Image newImage = image.getScaledInstance(100, 100, java.awt.Image.SCALE_SMOOTH);
                     imageIcon = new ImageIcon(newImage);
                     pic.setIcon(imageIcon);
+                    user.setUserImage(imageIcon);
                 }catch (Exception ex){
                     ex.printStackTrace();
                 }

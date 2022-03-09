@@ -1,5 +1,6 @@
 package view;
 
+import model.User;
 import model.client.Client;
 import view.panel.CenterLPanel;
 import view.panel.CenterRPanel;
@@ -64,5 +65,7 @@ public class MainPanel extends JPanel {
         this.sPanel = sPanel;
     }
 
-    public void setList(ArrayList<String> userList){cRPanel.setUserList(userList);}
+    public void setList(String userList){
+        cRPanel.setUserList(userList);
+    }
 }

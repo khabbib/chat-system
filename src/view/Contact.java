@@ -1,32 +1,65 @@
 package view;
 
+import model.User;
+
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Contact {
-    JFrame frame = new JFrame("Contact List");
-    JList<String> contactsJList = new JList<>();
 
-    public Contact(String[] contacts){
+    //private User user;
+
+    JFrame frame;
+    String[] contactUsers = new String[20]; // 20 contacts to each user
+    int nbrOfUsers = 1;
+    JList<String> contacts;
+
+    public Contact() {
+        //this.user = user;
+        contacts = new JList<String>(contactUsers);
+
+        frame = new JFrame("ContactList");
         frame.setBounds(200, 50, 300, 400);
         frame.setLayout(null);
+        frame.setResizable(false);
+        frame.setVisible(false);
+    }
+
+    public void contacts() {
+        contacts.setBounds(0,0,300, 400);
+        contacts.setOpaque(true);
+        contacts.setBackground(new Color(220,220,220));
+        contacts.setVisible(true);
+        frame.add(contacts);
+    }
+
+    public void showFrame() {
         frame.setVisible(true);
-
-        contactsJList.setBounds(0,0,300, 400);
-        contactsJList.setOpaque(true);
-        contactsJList.setBackground(new Color(220,220,220));
-        contactsJList.setVisible(true);
-
-        contactsJList.setListData(contacts);
-
-        frame.add(contactsJList);
     }
 
-    public void setContactsJList(String[] contactsJList) {
-        this.contactsJList.setListData(contactsJList);
+    public void addUser(User user) {
+        for(int i = 0; i < nbrOfUsers; i++){
+            if(contactUsers[i] == null){
+                contactUsers[i] = String.valueOf(user);
+                System.out.println(Arrays.toString(contactUsers));
+            }
+        }
+        nbrOfUsers++;
+        setContacts(contactUsers);
+        System.out.println(nbrOfUsers);
     }
 
-    public Object getContactsJList() {
-        return contactsJList;
+    public void setContacts(String[] contacts) {
+        this.contacts.setListData(contacts);
+    }
+
+    public void setContacts(JList<String> contacts) {
+        this.contacts = contacts;
+    }
+
+    public Object getContacts() {
+        return contacts;
     }
 }

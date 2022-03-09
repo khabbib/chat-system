@@ -1,5 +1,7 @@
 package view;
 
+import model.Message;
+import model.User;
 import model.client.Client;
 
 import javax.swing.*;
@@ -29,7 +31,6 @@ public class MainFrame extends JFrame{
 
         color = viewUtilities.getMainFrameBackgroundColor();
         this.getContentPane().setBackground(color);
-
         this.setVisible(true);
     }
 
@@ -45,13 +46,24 @@ public class MainFrame extends JFrame{
         mainPanel.getcLPanel().setTxtScreen(txtScreen);
     }
 
-    public void updateMessageScreen(String[] stringList) {
+    // string + img
+    public void updateMessageScreen(Object stringList) {
         mainPanel.getcLPanel().updateMessageScreen(stringList);
     }
 
-    public void setList(ArrayList<String> userList) {mainPanel.setList(userList);}
+    public void setList(String userList) {
+        mainPanel.setList(userList);
+    }
 
-    public JList getList() {
-        return mainPanel.getcRPanel().getUserList();
+    public User getUserAt(int index) {
+        return mainPanel.getcRPanel().getUserAt(index);
+    }
+
+    public int getUserListIndex() {
+        return mainPanel.getcRPanel().getUserListIndex();
+    }
+
+    public ImageIcon getImgIcon() {
+        return mainPanel.getsPanel().getImgMsg();
     }
 }

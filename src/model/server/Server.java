@@ -1,26 +1,33 @@
 package model.server;
 
-import java.awt.*;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
+import java.util.*;
 
+import model.Message;
 import model.User;
-import model.client.Client;
+import view.panel.SouthPanel;
 
 import javax.swing.*;
 
 public class Server extends JFrame {
-
     private JFrame frame;
-    private JLabel logger;
-
+    private static JLabel logger;
     private ServerSocket serverSocket;
-    private BufferedReader bufferedReader;
-    private BufferedWriter bufferedWriter;
+    private static User user;
 
-    private ArrayList<User> clients;
+
+    public static ArrayList<ClientHandler> clientH_HashList; //Håller koll på alla klienter. Låter oss  också kunna strema meddelande så att alla klienter kan se det
+    private static HashMap<User, ClientHandler> hashClients =  new HashMap<>();
+    private static ArrayList<User> clients = new ArrayList<>();
+
+    ObjectInputStream objectInputStream;
+    ObjectOutputStream objectOutputStream;
+    ClientHandler clientHandler;
+
+
+
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         ServerSocket serverSocket = new ServerSocket(4433);
@@ -28,21 +35,13 @@ public class Server extends JFrame {
         server.startServer();
     }
 
-    public void broadcastAllUsers() {
-        ArrayList<String> strings = new ArrayList<>();
-        for (int i = 0; i < clients.size(); i++) {
-            strings.add(clients.get(i).getUserName());
-        }
-        for (User client : clients) {
-            client.getStreamOut().println(strings);
-        }
-    }
+
 
     public Server(ServerSocket serverSocket) {
         super("Chat Server");
         this.serverSocket = serverSocket;
 
-        this.clients = new ArrayList<User>();
+        this.clientH_HashList = new ArrayList<ClientHandler>();
         this.frame = new JFrame();
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setResizable(false);
@@ -53,7 +52,8 @@ public class Server extends JFrame {
 
         logger = new JLabel("Logger");
         logger.setLocation(0, 0);
-        logger.setSize(250, 20);
+        logger.setSize(250, 250);
+        System.out.println("Gui made");
         this.add(logger);
     }
 
@@ -61,19 +61,18 @@ public class Server extends JFrame {
         try {
             while (!serverSocket.isClosed()) {
                 Socket client = serverSocket.accept();
-                logger.setText("A new client has been connected.");
-                ObjectInputStream objectInputStream = new ObjectInputStream(client.getInputStream());
-                User newUser = (User) objectInputStream.readObject();
-                clients.add(newUser);
-                System.out.println(clients.get(0).getUserName());
-                newUser.setStreamOut(new PrintStream(client.getOutputStream()));
-                ClientHandler clientHandler = new ClientHandler(client, newUser, this);
+                System.out.println("new client");
+                 clientHandler = new ClientHandler(client, this);
                 Thread thread = new Thread(clientHandler);
                 thread.start();
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void removeUser(User user){
+        this.clients.remove(user);
     }
 
     //Denna metod kommer stänga ner server socket om ett problem skulle uppstå
@@ -87,63 +86,98 @@ public class Server extends JFrame {
         }
     }
 
-    private static class ClientHandler implements Runnable {
-        public static ArrayList<ClientHandler> clientHandlers = new ArrayList<>(); //Håller koll på alla klienter. Låter oss  också kunna strema meddelande så att alla klienter kan se det
+    public static class ClientHandler implements Runnable {
         private Socket socket; //Socket som kommer från Server klassen, är nödvändigt för att hålla kommunikation med client
-        private BufferedReader bufferedReader; //Denna instans används för att läsa data från klienten
-        private BufferedWriter bufferedWriter; //Denna instans används för att skicka data till klienten
+        private ObjectOutputStream objectOutputStream; //Denna instans används för att läsa data från klienten
+        private ObjectInputStream objectInputStream; //Denna instans används för att skicka data till klienten
         private User clientUser;
         private Server server;
 
-        public ClientHandler(Socket socket, User user, Server server) {
+        public ClientHandler(Socket socket, Server server) {
             try {
+                this.server = server;
+                objectInputStream = new ObjectInputStream(socket.getInputStream());
+                objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+                user = (User) objectInputStream.readObject();
+                clients.add(user);
+                hashClients.put(user, this);
+                //user.setStreamOut(new PrintStream(socket.getOutputStream()));
+                //user.setStreamIn(socket.getInputStream());
+
+                broadcastAllUsers();
+                showClient("Server: " + user.getUserName() + " Joined");
                 this.socket = socket;
                 this.clientUser = user;
-                this.server = server;
-                this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-                this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                server.broadcastAllUsers();
-                clientHandlers.add(this);
-
-                broadcastMessage("Server: " + user.getUserName() + " har deltagit i chatten!");
-            } catch (IOException e) {
-                Client.closeEverything(socket, bufferedReader, bufferedWriter);
+                logger.setIcon(new ImageIcon(user.getUserImage().getImage()));
+                server.clientH_HashList.add(this);
+            } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
         }
 
-        public void broadcastMessage(String messageTosend) {
-            for (ClientHandler clientHandler : clientHandlers) {
-                try {
-                    if (!clientHandler.clientUser.getUserName().equals(clientUser.getUserName())) {
-                        clientHandler.bufferedWriter.write(clientUser.getUserName() + ": " + messageTosend);
-                        clientHandler.bufferedWriter.newLine();
-                        clientHandler.bufferedWriter.flush();
-                    }
-                } catch (IOException e) {
-                    Client.closeEverything(socket, bufferedReader, bufferedWriter);
-                    e.printStackTrace();
-                }
+        // bara users
+        public void broadcastAllUsers() throws IOException {
+            System.out.println("brodcusting all");
+            for (Map.Entry<User, ClientHandler> entry : hashClients.entrySet()){
+                entry.getValue().updateClients(clients);
             }
         }
 
-        public void removeClienthandler() {
-            clientHandlers.remove(this);
+        // en message i taget
+        public void broadcastMessage(String messageTosend) throws IOException {
+            for (User client : clients) {
+                System.out.println("brodcusting");
+                objectOutputStream.writeObject(messageTosend);
+                //client.getStreamOut().println(messageTosend);
+            }
+        }
+
+        public void removeClienthandler() throws IOException {
+            server.clientH_HashList.remove(this);
             broadcastMessage("Server: " + clientUser.getUserName() + " har lämnat chatten");
         }
 
         @Override
         public void run() {
-            while (socket.isConnected()) {
+            System.out.println("running clienthandler");
+            while (true){
                 try {
-                    String messageFromClient = bufferedReader.readLine();
-                    broadcastMessage(messageFromClient);
-                    Thread.sleep(1000);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Message msg = (Message) objectInputStream.readObject();
+                    showClient(msg); //show message to a specific person
+                    //broadcastMessage(clientUser.getUserName()+": "+msg.getText());
+                }catch (IOException | ClassNotFoundException e){
+                    //e.printStackTrace();
                 }
+            }
+        }
+
+
+        // take out the spc user from the hashmap client list
+        private void showClient(Object msg) {
+            System.out.println(msg.toString() + " brodcust msg");
+            for (User user : clients){
+                System.out.println("brodcust is sending");
+                hashClients.get(user).sendToClient(msg);
+            }
+        }
+        // send to all clients which are actives a message
+        public void sendToClient(Object msg){
+            try {
+                objectOutputStream.writeObject(msg);
+                System.out.println("write the msg to strom");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        public void updateClients(ArrayList<User> users) {
+            try {
+                for (User item : users){
+                    System.out.println("update client");
+                    objectOutputStream.writeObject(item);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }

@@ -1,12 +1,13 @@
 package model.client;
 
 import model.Login;
+import model.Message;
 import model.User;
-import model.server.Server;
 import view.ButtonType;
 import view.Contact;
 import view.MainFrame;
 
+import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -17,107 +18,115 @@ public class Client {
     private Socket socket;
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
+    private PrintWriter output;
     private User user;
     private Thread read;
 
     private MainFrame view;
+    private Contact contact;
+    ObjectInputStream objectInputStream;
+    ObjectOutputStream objectOutputStream;
 
     public Client(Socket socket, User user) {
         view = new MainFrame(this);
+        contact = new Contact();
+        contact.contacts();
+
         try {
             this.socket = socket;
-            this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-
+            objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+            objectInputStream = new ObjectInputStream(socket.getInputStream());
+            System.out.println("connected user");
             this.user = user;
-            user.setStreamOut(new PrintStream(socket.getOutputStream()));
-
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-            objectOutputStream.writeObject(user);
-
-            read = new Read();
-            read.start();
-
+            //user.setStreamOut(new PrintStream(socket.getOutputStream()));
+            new Read().start();
+            //read.start();
         } catch (IOException e) {
             closeEverything(socket, bufferedReader, bufferedWriter);
             e.printStackTrace();
         }
-    }
 
-    public void listenForMessage() {
-        // Listen for messages
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                String msgFromGruppChat;
-                while (socket.isConnected()) {
-                    try {
-                        msgFromGruppChat = bufferedReader.readLine();
-                        //System.out.println(msgFromGruppChat);
-                        addMessage(msgFromGruppChat);
-                        view.setTxtMsg("");
-                        view.updateMessageScreen(getMessageString());
-                    } catch (IOException e) {
-                        closeEverything(socket, bufferedReader, bufferedWriter);
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }).start();
-    }
-
-    public void sendMessage() {
         try {
-            while (socket.isConnected()) {
+            objectOutputStream.writeObject(user);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-                if(view.getTxtMsg() != null){bufferedWriter.write(view.getTxtMsg());}
-                //bufferedWriter.newLine();
-                bufferedWriter.flush();
+    public void sendMessage(Message msg) {
+        try {
+            if (view.getTxtMsg() != null) {
+                System.out.println("sfssfsfsfd");
+                objectOutputStream.writeObject(msg);
             }
-        } catch(IOException e){
-            closeEverything(socket, bufferedReader, bufferedWriter);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public void buttonPressed(ButtonType button) {
+
         switch (button) {
+
             case ContactList:
-                System.out.println("Button 'Contact' is clicked!");
-                Contact contact = new Contact(user.getContacts().toArray(new String[0]));
+                //System.out.println("Button 'Contact' is clicked!");
+                //contact.showFrame();
+                contact.showFrame();
                 break;
 
             case ContactAdd:
-                System.out.println("Button 'Add contact' is clicked!");
-                user.addContact((String) view.getList().getSelectedValue());        //Kontaktbok tillagd, värden sparas i User
+                //System.out.println("Button 'Add contact' is clicked!");
+
+                int index = view.getUserListIndex();
+
+                if(validateIndex(index)) {
+
+                    User user = view.getUserAt(index);
+
+                    if(user != null) {
+
+                        contact.addUser(user);
+                        System.out.println("Added!");
+                    }
+                }
+
                 break;
 
             case File:
-                System.out.println("Button 'File' is clicked!");
-                System.out.println("[-!-] Attention: This button is modified in SouthPanel!");
+                //System.out.println("Button 'File' is clicked!");
+                //System.out.println("[-!-] Attention: This button is modified in SouthPanel!");
                 break;
 
             case Send:
-                System.out.println("Button 'Send' is clicked!");
+                //System.out.println("Button 'Send' is clicked!");
 
                 // Text Area
                 //view.setTxtScreen(view.getTxtMsg());
                 //view.setTxtMsg("");
 
                 // JList
-                addMessage(view.getTxtMsg());
+                Message msg = new Message(view.getTxtMsg(),user.getUserName(),"alla" , view.getImgIcon());
+                sendMessage(msg);
                 view.setTxtMsg("");
-                view.updateMessageScreen(getMessageString());
-
+                System.out.println("helllooooooooo");
                 break;
 
             case Logout:
-                System.out.println("Button 'Logout' is clicked!");
+                //System.out.println("Button 'Logout' is clicked!");
                 System.out.println("Bye bye!");
-                //Server.removeClienthandler();
                 System.exit(0);
                 break;
         }
+    }
+
+    //Check that we have gotten an index
+    private boolean validateIndex(int index) {
+        boolean ok = true;
+        if (index < 0) {
+            JOptionPane.showMessageDialog(null, "Select user from the active list!");
+            ok = false;
+        }
+        return ok;
     }
 
     public static void closeEverything(Socket socket, BufferedReader bufferedReader, BufferedWriter bufferedWriter)  {
@@ -129,70 +138,53 @@ public class Client {
             e.printStackTrace();
         }
     }
+    public void addMessage(Object message) {
+        view.updateMessageScreen(message);
 
-    private String[] messages = new String[100];
-    private int nbrOfMessages = 0;
-
-    public void addMessage(String message) {
-
-        for(int i = 0; i <= nbrOfMessages; i++){
-            if(messages[i] == null){
-                messages[i] = message;
-            }
-        }
-        nbrOfMessages++;
     }
-
-    public String[] getMessageString() {
-        String[] infoStrings = new String[nbrOfMessages];
-        for(int i = 0; i < messages.length; i++){
-            if(messages[i] != null){
-                infoStrings[i] = messages[i].toString();
-            }
-        }
-        return infoStrings;
-    }
-
     // main
     public static void main(String[] args) throws IOException {
         Login login = new Login();
         login.setVisible(true);
-
-        while(!login.isDone()){
-            System.out.println();
-        }
-
+        System.out.println("Connection checks...");
+        while (!login.isDone()){
+            System.out.println("waiting...");
+        } // tar tid
         Socket socket = new Socket("localhost", 4433);
         Client client = new Client(socket, login.getUser());
-
-        System.out.println("Connection checks...");
-
-        client.listenForMessage();
-        client.sendMessage();
-
         System.out.println("Connection is completed!");
     }
 
-    class Read extends Thread {
+    ArrayList<User> listUser = new ArrayList<User>();
+    private int nbr;
+
+    class Read extends Thread { // server listener
+        Object obj;
         public void run() {
-            String message;
-            while(!Thread.currentThread().isInterrupted()){
+            while(true){
                 try {
-                    message = bufferedReader.readLine();
-                    if(message != null){
-                        if (message.charAt(0) == '[') {
-                            message = message.substring(1, message.length()-1);
-                            ArrayList<String> listUser = new ArrayList<String>(Arrays.asList(message.split(", ")));
-                            view.setList(listUser);
-                        }else{
-                            addMessage(message);
-                            view.setTxtMsg(message);
-                            view.updateMessageScreen(getMessageString());
-                        }
+                    obj = objectInputStream.readObject();
+                    if (obj instanceof User){
+                        listUser.add((User) obj);
+                        System.out.println("user");
+                        view.setList(((User) obj).getUserName());
                     }
+                    else if(obj instanceof Message){
+                        System.out.println("Message received");
+                        addMessage(obj);
+
+                        //view.updateMessageScreen(getMessageString());
+                    }
+                    else if (obj instanceof String) {
+                        System.out.println("message is a string");
+                        addMessage(obj);
+                        if (obj.equals("userLeft")) {
+                            listUser.clear();
+                        }
                 }
-                catch (IOException ex) {
-                    System.err.println("Failed to parse incoming message");
+                }
+                catch (IOException | ClassNotFoundException ex) {
+                    //ex.printStackTrace();
                 }
             }
         }

@@ -1,7 +1,7 @@
 package view.panel;
 
-import model.client.Client;
-import view.ButtonType;
+import controller.Client;
+import view.utilities.ButtonType;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -22,9 +22,9 @@ public class SouthPanel extends JPanel {
     private final int imageSize = 75;
 
     private JTextField txtMsg;
+
     private JButton chooseFile;
     private JButton sendButton;
-
     private JButton btnLogout;
 
     private JLabel imageMsgArea;
@@ -51,7 +51,6 @@ public class SouthPanel extends JPanel {
     private void txtMsg() {
         txtMsg = new JTextField();
         txtMsg.setBounds(50,30,300,30);
-
         txtMsg.addKeyListener(new KeyAdapter() {
             // send message on Enter
             public void keyPressed(KeyEvent e) {
@@ -60,7 +59,6 @@ public class SouthPanel extends JPanel {
                 }
             }
         });
-
         add(txtMsg);
     }
 
@@ -78,9 +76,9 @@ public class SouthPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser file = new JFileChooser();
+                file.showOpenDialog(null);
                 FileNameExtensionFilter filter = new FileNameExtensionFilter("Pictures", "jpg", "png");
                 file.setFileFilter(filter);     //Fil filter, du kan bara använda bilder.
-                file.showOpenDialog(null);
                 File src = file.getSelectedFile();
                 try {
                     ImageIcon ii = new ImageIcon(ImageIO.read(new File(src.getAbsolutePath())));
@@ -89,6 +87,7 @@ public class SouthPanel extends JPanel {
                     ii = new ImageIcon(newImage);
                     imageMsgArea.setIcon(ii);
                     ImgToSend = ii;
+                    setImgMsg(ii);
                     txtMsg.setText(src.getName());
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -97,9 +96,7 @@ public class SouthPanel extends JPanel {
         });
 
         chooseFile.addActionListener(l -> client.buttonPressed(ButtonType.File));
-
         add(chooseFile);
-
     }
 
     private void btnSendMsg() {
@@ -140,12 +137,26 @@ public class SouthPanel extends JPanel {
     public String getTxtMsg() {
         return txtMsg.getText();
     }
-
     public void setTxtMsg(String txtMsg) {
         this.txtMsg.setText(txtMsg);
     }
 
+
+    public void setImgMsg(ImageIcon imageIcon) {
+        imageMsgArea.setIcon(imageIcon);
+        //ImgToSend.setImage(imageIcon);
+    }
     public ImageIcon getImgMsg() {
         return ImgToSend;
+    }
+    public void setImageToNull(Image image) {
+        ImgToSend = new ImageIcon();
+    }
+
+    public JLabel getImageMsgArea() {
+        return imageMsgArea;
+    }
+    public void setImageMsgArea(String imageMsgArea) {
+        this.imageMsgArea.setText(imageMsgArea);
     }
 }

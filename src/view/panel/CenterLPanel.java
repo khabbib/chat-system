@@ -1,12 +1,12 @@
 package view.panel;
 
 import model.Message;
-import model.client.Client;
-import view.ViewUtilities;
+import controller.Client;
+import view.utilities.ViewUtilities;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.util.ArrayList;
 
 public class CenterLPanel extends JPanel {
 
@@ -38,9 +38,8 @@ public class CenterLPanel extends JPanel {
         s.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         s.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         s.setBounds(0,30, width - 10, height - 10);
-
-        sb = s.getVerticalScrollBar();
         //txtMessageScreen.setSelectionMode(DefaultListSelectionModel.SINGLE_SELECTION);
+        sb = s.getVerticalScrollBar();
         this.add(s);
     }
 
@@ -54,28 +53,16 @@ public class CenterLPanel extends JPanel {
         lblScreen.setBounds(20, 0, 180,20);
         lblScreen.setForeground(Color.BLACK);
         lblScreen.setFont(new Font("Arial", Font.BOLD, 12));
-        add(lblScreen);
-
-//        txtScreen = new JTextArea();
-//        txtScreen.setLocation(0,20);
-//        txtScreen.setSize(width, height - 20);
-//        txtScreen.setFont(mainFont);
-//        txtScreen.setVisible(true);
-//        txtScreen.setEditable(false);
-//        this.add(txtScreen);
+        this.add(lblScreen);
 
         txtMessageScreen = new JList<>(modelMsg);
         txtMessageScreen.setLocation(0, 20);
         txtMessageScreen.setSize(width, height - 20);
+        txtMessageScreen.setBorder(new EmptyBorder(10,10, 10, 10));
         txtMessageScreen.setFont(mainFont);
-        //txtMessageScreen.setOpaque(true);
         txtMessageScreen.setVisible(true);
-        //txtMessageScreen.setLayoutOrientation(JList.VERTICAL_WRAP);
-
-//        JScrollPane scrollPane = new JScrollPane();
-//        scrollPane.setViewportView(txtMessageScreen);
-//        txtMessageScreen.setLayoutOrientation(JList.VERTICAL);
-
+        JScrollPane scrollPane = new JScrollPane();
+        scrollPane.setViewportView(txtMessageScreen);
         this.add(txtMessageScreen);
 
     }
@@ -91,7 +78,7 @@ public class CenterLPanel extends JPanel {
     public void updateMessageScreen(Object msg) {
         if (msg instanceof Message){
 
-            modelMsg.addElement(((Message)msg).getSendare() + " : " + ((Message)msg).getText());
+            modelMsg.addElement(((Message) msg).getTime() + " [" + ((Message)msg).getSendare() + "]: " + ((Message)msg).getText());
             if (((Message)msg).getIcon() != null){
                 modelMsg.addElement(((Message)msg).getIcon());
             }
@@ -99,9 +86,7 @@ public class CenterLPanel extends JPanel {
         else if(msg instanceof String){
             modelMsg.addElement(msg.toString());
         }
-
         //txtMessageScreen = new JList<>(modelMsg);
-        sb.setValue(sb.getMaximum());       //Scrollar längst ner när nya meddelanden överskrider skärmgräns.
-
+        sb.setValue(sb.getMaximum() - 10);
     }
 }

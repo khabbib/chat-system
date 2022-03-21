@@ -6,7 +6,7 @@ import java.io.PrintStream;
 import java.io.Serializable;
 
 public class User implements Serializable {
-    private String userName, msg;
+    private String userName;
     private ImageIcon userImage;
     private transient PrintStream streamOut;
     private transient InputStream streamIn;

@@ -1,11 +1,14 @@
 package view.panel;
 
 import model.User;
-import model.client.Client;
-import view.ButtonType;
-import view.ViewUtilities;
+import controller.Client;
+import view.utilities.ButtonType;
+import view.utilities.ViewUtilities;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -14,7 +17,8 @@ public class CenterRPanel extends JPanel {
     private int width;
     private int height;
     private JList<String> userList;
-    private ArrayList<User> contactUsers;
+    private ArrayList<User> contactUsers = new ArrayList<>();
+    private SouthPanel southPanel;
 
     private DefaultListModel<String> listModel = new DefaultListModel<>();
     private JButton btnContactList;
@@ -24,11 +28,12 @@ public class CenterRPanel extends JPanel {
 
     private Client client;
 
-    public CenterRPanel(int width, int height, Client client) {
+    public CenterRPanel(int width, int height,SouthPanel southPanel, Client client) {
         ViewUtilities viewUtilities = new ViewUtilities();
         Color bgColor = viewUtilities.getMainFrameBackgroundColor();
         this.setBackground(bgColor);
 
+        this.southPanel = southPanel;
         this.client = client;
         this.setLayout(null);
         this.width = width;
@@ -54,7 +59,19 @@ public class CenterRPanel extends JPanel {
         userList = new JList<String>(listModel);
         userList.setOpaque(true);
         userList.setBounds(0,20,width, height - 60);
+        userList.setBorder(new EmptyBorder(10,10, 10, 10));
         this.add(userList);
+        userList.addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent event) {
+                if (!event.getValueIsAdjusting()){
+                    try {
+                        JList source = (JList)event.getSource();
+                        southPanel.setTxtMsg("@" + source.getSelectedValue().toString());
+                    } catch (Exception e) {
+                    }
+                }
+            }
+        });
     }
 
     private void btnContact() {
@@ -83,11 +100,18 @@ public class CenterRPanel extends JPanel {
         this.add(btnAddToContact);
     }
 
-    public void setUserList(String users) {
-        listModel.addElement(users);
-        //contactUsers = users;
-        userList.setModel(listModel);
+    public void setUserList(User user) {
+        contactUsers.add(user);
+        removeDuplicates(contactUsers);
+        listModel.removeAllElements();
+        for (User value : contactUsers) {
+            System.out.println(value.getUserName());
+            listModel.addElement(value.getUserName());
+            nbrOfUsers++;
+        }
     }
+
+
 
     public User getUserAt(int index){
         if(!(index < nbrOfUsers)){
@@ -100,5 +124,32 @@ public class CenterRPanel extends JPanel {
 
     public int getUserListIndex() {
         return userList.getSelectedIndex();
+    }
+
+    public void addContacts(ArrayList<User> list) {
+        System.out.println("addcontact: ");
+        System.out.println(contactUsers.size());
+        contactUsers.clear();
+        contactUsers.addAll(list);
+        System.out.println(contactUsers.size());
+        removeDuplicates(contactUsers);
+        listModel.removeAllElements();
+        System.out.println(contactUsers.size());
+        for (User user : contactUsers) {
+            System.out.println("got some" );
+            listModel.addElement(user.getUserName());
+        }
+    }
+
+    public void removeDuplicates(ArrayList<User> user){
+        for (int i = 0; i < user.size(); i++) {
+            int x = 0;
+            for (int j = 0; j < user.size(); j++) {
+                if (user.get(i).getUserName().equals(user.get(j).getUserName())) {
+                    if (x > 0) user.remove(j);
+                    else x = 1;
+                }
+            }
+        }
     }
 }
